@@ -1,5 +1,7 @@
 # terraform-vulnetix-aws-siem-shipping
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Vulnetix/terraform-vulnetix-aws-siem-shipping)
+
 Ships an AWS account's logs to Vulnetix Guardian, the Vulnetix SIEM. This is the Terraform form of the CloudFormation stack the Guardian Sources page launches, with the same resource names, so use one or the other in each region.
 
 It creates three Firehose delivery streams that post to `ingest.vulnetix.com` over HTTPS with your Guardian ingest token:
