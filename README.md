@@ -24,7 +24,7 @@ module "vulnetix_siem" {
 }
 ```
 
-With no `vpc_ids`, only CloudTrail is sent. CloudTrail events reach EventBridge only while a trail logs management events. The trail from [terraform-vulnetix-aws-onboarding](https://github.com/Vulnetix/terraform-vulnetix-aws-onboarding) does, and so does any organisation trail.
+With no `vpc_ids`, only CloudTrail is sent. CloudTrail events reach EventBridge only while a trail logs management events. The trail from [terraform-vulnetix-aws-onboarding](https://github.com/Vulnesis/terraform-vulnetix-aws-onboarding) does, and so does any organisation trail.
 
 - [examples/minimal](examples/minimal): CloudTrail only, the token from a variable.
 - [examples/complete](examples/complete): every input, VPCs found by tag and the token read from Secrets Manager.
