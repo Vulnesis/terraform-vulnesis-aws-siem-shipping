@@ -1,11 +1,11 @@
-# Vulnetix Guardian log delivery: the Terraform form of the CloudFormation
-# template the Guardian Sources page launches (Vulnetix/siem
+# Vulnesis Guardian log delivery: the Terraform form of the CloudFormation
+# template the Guardian Sources page launches (Vulnesis/siem
 # aws/vulnetix-siem.yaml). The resource names are the template's, so the
 # two are interchangeable, and an account runs one or the other per region.
 #
-# Three Firehose streams deliver to ingest.vulnetix.com over HTTPS with the
+# Three Firehose streams deliver to ingest.vulnes.is over HTTPS with the
 # Guardian ingest token: VPC flow logs, Route 53 Resolver query logs and
-# CloudTrail. Nothing here grants Vulnetix any access to the account.
+# CloudTrail. Nothing here grants Vulnesis any access to the account.
 
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
@@ -111,7 +111,7 @@ resource "aws_kinesis_firehose_delivery_stream" "this" {
   destination = "http_endpoint"
 
   http_endpoint_configuration {
-    name               = "Vulnetix Guardian"
+    name               = "Vulnesis Guardian"
     url                = "https://${var.ingest_host}/v1/ingest/aws/${each.key}"
     access_key         = var.ingest_token
     buffering_interval = 0
@@ -164,7 +164,7 @@ resource "aws_route53_resolver_query_log_config_association" "vpc" {
 }
 
 # CloudTrail reaches EventBridge only while a trail logs management events
-# (the Vulnetix onboarding pipeline's trail does). Read-only calls never
+# (the Vulnesis onboarding pipeline's trail does). Read-only calls never
 # reach it.
 data "aws_iam_policy_document" "events_assume" {
   statement {
@@ -204,7 +204,7 @@ resource "aws_cloudwatch_event_rule" "cloudtrail" {
   count = local.cloudtrail_on ? 1 : 0
 
   name        = "vulnetix-siem-cloudtrail"
-  description = "CloudTrail management write events and console sign-ins to Vulnetix Guardian"
+  description = "CloudTrail management write events and console sign-ins to Vulnesis Guardian"
   event_pattern = jsonencode({
     "detail-type" = [
       "AWS API Call via CloudTrail",

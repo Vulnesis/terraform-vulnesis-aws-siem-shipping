@@ -1,5 +1,5 @@
 # CloudTrail only: the one required input is the Guardian ingest token. From
-# the registry, use source = "Vulnetix/aws-siem-shipping/vulnetix" with a
+# the registry, use source = "Vulnesis/aws-siem-shipping/vulnetix" with a
 # version.
 
 provider "aws" {

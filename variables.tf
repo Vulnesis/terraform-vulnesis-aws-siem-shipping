@@ -10,9 +10,9 @@ variable "ingest_token" {
 }
 
 variable "ingest_host" {
-  description = "The Guardian ingest host. Change it only when Vulnetix support asks you to."
+  description = "The Guardian ingest host. Change it only when Vulnesis support asks you to."
   type        = string
-  default     = "ingest.vulnetix.com"
+  default     = "ingest.vulnes.is"
 }
 
 variable "vpc_ids" {
@@ -39,7 +39,7 @@ variable "send_resolver_logs" {
 }
 
 variable "send_cloudtrail" {
-  description = "Whether to send CloudTrail management write events and console sign-ins. They reach EventBridge only while a trail logs management events, such as the Vulnetix onboarding pipeline's."
+  description = "Whether to send CloudTrail management write events and console sign-ins. They reach EventBridge only while a trail logs management events, such as the Vulnesis onboarding pipeline's."
   type        = bool
   default     = true
 }

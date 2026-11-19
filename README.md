@@ -1,22 +1,22 @@
 # terraform-vulnetix-aws-siem-shipping
 
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Vulnetix/terraform-vulnetix-aws-siem-shipping)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Vulnesis/terraform-vulnetix-aws-siem-shipping)
 
-Ships an AWS account's logs to Vulnetix Guardian, the Vulnetix SIEM. This is the Terraform form of the CloudFormation stack the Guardian Sources page launches, with the same resource names, so use one or the other in each region.
+Ships an AWS account's logs to Vulnesis Guardian, the Vulnesis SIEM. This is the Terraform form of the CloudFormation stack the Guardian Sources page launches, with the same resource names, so use one or the other in each region.
 
-It creates three Firehose delivery streams that post to `ingest.vulnetix.com` over HTTPS with your Guardian ingest token:
+It creates three Firehose delivery streams that post to `ingest.vulnes.is` over HTTPS with your Guardian ingest token:
 
 - `vulnetix-siem-flow`: VPC flow logs for the VPCs you name, in the format Guardian parses.
 - `vulnetix-siem-dns`: Route 53 Resolver query logs for the same VPCs.
 - `vulnetix-siem-cloudtrail`: CloudTrail management write events and console sign-ins, through an EventBridge rule.
 
-Batches Guardian refuses after five minutes of retries land in `vulnetix-siem-errors-<account>-<region>`, kept for 14 days by default. Nothing here grants Vulnetix any access to the account.
+Batches Guardian refuses after five minutes of retries land in `vulnetix-siem-errors-<account>-<region>`, kept for 14 days by default. Nothing here grants Vulnesis any access to the account.
 
 ## Usage
 
 ```hcl
 module "vulnetix_siem" {
-  source  = "Vulnetix/aws-siem-shipping/vulnetix"
+  source  = "Vulnesis/aws-siem-shipping/vulnetix"
   version = "~> 1.0"
 
   ingest_token = var.guardian_ingest_token # gdn_..., from the Guardian Sources page
@@ -34,7 +34,7 @@ With no `vpc_ids`, only CloudTrail is sent. CloudTrail events reach EventBridge 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | `ingest_token` | The Guardian ingest token (`gdn_...`) from the Guardian Sources page. Sensitive. | `string` | n/a | yes |
-| `ingest_host` | The Guardian ingest host. | `string` | `"ingest.vulnetix.com"` | no |
+| `ingest_host` | The Guardian ingest host. | `string` | `"ingest.vulnes.is"` | no |
 | `vpc_ids` | VPCs to send flow logs and DNS query logs for. Empty sends CloudTrail only. | `list(string)` | `[]` | no |
 | `send_flow_logs` | Send VPC flow logs for `vpc_ids`. | `bool` | `true` | no |
 | `send_resolver_logs` | Send Route 53 Resolver query logs for `vpc_ids`. | `bool` | `true` | no |
