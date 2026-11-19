@@ -1,11 +1,11 @@
-# Vulnesis Guardian log delivery: the Terraform form of the CloudFormation
-# template the Guardian Sources page launches (Vulnesis/siem
+# Vulnetix Guardian log delivery: the Terraform form of the CloudFormation
+# template the Guardian Sources page launches (Vulnetix/siem
 # aws/vulnetix-siem.yaml). The resource names are the template's, so the
 # two are interchangeable, and an account runs one or the other per region.
 #
-# Three Firehose streams deliver to ingest.vulnes.is over HTTPS with the
+# Three Firehose streams deliver to ingest.vulnetix.com over HTTPS with the
 # Guardian ingest token: VPC flow logs, Route 53 Resolver query logs and
-# CloudTrail. Nothing here grants Vulnesis any access to the account.
+# CloudTrail. Nothing here grants Vulnetix any access to the account.
 
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
@@ -26,6 +26,23 @@ locals {
   flow_log_format = "$${version} $${account-id} $${region} $${vpc-id} $${interface-id} $${srcaddr} $${dstaddr} $${srcport} $${dstport} $${protocol} $${packets} $${bytes} $${start} $${end} $${action} $${tcp-flags} $${flow-direction} $${log-status}"
 
   tags = merge({ ManagedBy = "terraform" }, var.tags)
+
+  # The ingest host for the brand. Under vulnetix it is var.ingest_host as
+  # given. Under vulnesis a vulnetix.com host (with an optional port) maps
+  # onto vulnes.is: vulnetix.com is vulnes.is, and a subdomain's labels are
+  # joined by hyphens (ingest.vulnetix.com is ingest.vulnes.is,
+  # api.vdb.vulnetix.com is api-vdb.vulnes.is). Any other host is unchanged.
+  ingest_host_parts = regex("^(.*?)(:[0-9]+)?$", var.ingest_host)
+  ingest_host_name  = lower(local.ingest_host_parts[0])
+  ingest_host_port  = local.ingest_host_parts[1] == null ? "" : local.ingest_host_parts[1]
+  ingest_host_sub   = trimsuffix(local.ingest_host_name, ".vulnetix.com")
+  ingest_host_vulnesis = (
+    local.ingest_host_name == "vulnetix.com" ? "vulnes.is${local.ingest_host_port}" :
+    endswith(local.ingest_host_name, ".vulnetix.com") && can(regex("^[a-z0-9-]+(\\.[a-z0-9-]+)*$", local.ingest_host_sub)) ?
+    "${replace(local.ingest_host_sub, ".", "-")}.vulnes.is${local.ingest_host_port}" :
+    var.ingest_host
+  )
+  ingest_host = var.brand == "vulnesis" ? local.ingest_host_vulnesis : var.ingest_host
 }
 
 # Batches Guardian could not take after five minutes of retries land here.
@@ -111,8 +128,8 @@ resource "aws_kinesis_firehose_delivery_stream" "this" {
   destination = "http_endpoint"
 
   http_endpoint_configuration {
-    name               = "Vulnesis Guardian"
-    url                = "https://${var.ingest_host}/v1/ingest/aws/${each.key}"
+    name               = "Vulnetix Guardian"
+    url                = "https://${local.ingest_host}/v1/ingest/aws/${each.key}"
     access_key         = var.ingest_token
     buffering_interval = 0
     buffering_size     = 1
@@ -164,7 +181,7 @@ resource "aws_route53_resolver_query_log_config_association" "vpc" {
 }
 
 # CloudTrail reaches EventBridge only while a trail logs management events
-# (the Vulnesis onboarding pipeline's trail does). Read-only calls never
+# (the Vulnetix onboarding pipeline's trail does). Read-only calls never
 # reach it.
 data "aws_iam_policy_document" "events_assume" {
   statement {
@@ -204,7 +221,7 @@ resource "aws_cloudwatch_event_rule" "cloudtrail" {
   count = local.cloudtrail_on ? 1 : 0
 
   name        = "vulnetix-siem-cloudtrail"
-  description = "CloudTrail management write events and console sign-ins to Vulnesis Guardian"
+  description = "CloudTrail management write events and console sign-ins to Vulnetix Guardian"
   event_pattern = jsonencode({
     "detail-type" = [
       "AWS API Call via CloudTrail",

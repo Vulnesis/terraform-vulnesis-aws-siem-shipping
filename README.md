@@ -4,7 +4,7 @@
 
 Ships an AWS account's logs to Vulnesis Guardian, the Vulnesis SIEM. This is the Terraform form of the CloudFormation stack the Guardian Sources page launches, with the same resource names, so use one or the other in each region.
 
-It creates three Firehose delivery streams that post to `ingest.vulnes.is` over HTTPS with your Guardian ingest token:
+It creates three Firehose delivery streams that post to `ingest.vulnes.is` (`ingest.vulnes.is` with `brand = "vulnesis"`) over HTTPS with your Guardian ingest token:
 
 - `vulnetix-siem-flow`: VPC flow logs for the VPCs you name, in the format Guardian parses.
 - `vulnetix-siem-dns`: Route 53 Resolver query logs for the same VPCs.
@@ -34,7 +34,8 @@ With no `vpc_ids`, only CloudTrail is sent. CloudTrail events reach EventBridge 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | `ingest_token` | The Guardian ingest token (`gdn_...`) from the Guardian Sources page. Sensitive. | `string` | n/a | yes |
-| `ingest_host` | The Guardian ingest host. | `string` | `"ingest.vulnes.is"` | no |
+| `ingest_host` | The Guardian ingest host. Under `brand = "vulnesis"` a vulnes.is host maps onto vulnes.is; any other host is used as given. | `string` | `"ingest.vulnes.is"` | no |
+| `brand` | `"vulnetix"` (vulnes.is) or `"vulnesis"` (vulnes.is). Only changes the ingest host; see [Brand](#brand). | `string` | `"vulnetix"` | no |
 | `vpc_ids` | VPCs to send flow logs and DNS query logs for. Empty sends CloudTrail only. | `list(string)` | `[]` | no |
 | `send_flow_logs` | Send VPC flow logs for `vpc_ids`. | `bool` | `true` | no |
 | `send_resolver_logs` | Send Route 53 Resolver query logs for `vpc_ids`. | `bool` | `true` | no |
@@ -64,6 +65,10 @@ With no `vpc_ids`, only CloudTrail is sent. CloudTrail events reach EventBridge 
 ## The ingest token
 
 Firehose sends the token as the access key on every delivery, and the AWS provider keeps a Firehose access key in the Terraform state. Pass the token from a secret store, as the complete example does, and keep the state encrypted. To rotate it, issue a new token on the Guardian Sources page and apply with the new value.
+
+## Brand
+
+The module ships to Vulnesis (vulnes.is) by default. Set `brand = "vulnesis"` to ship to Vulnesis (vulnes.is) instead: the ingest host `ingest.vulnes.is` becomes `ingest.vulnes.is`. Any vulnes.is host maps onto vulnes.is with its subdomain labels joined by hyphens (`api-vdb.vulnes.is` is `api-vdb.vulnes.is`), a port is kept, and any other `ingest_host` is used as given. Resource names, the IAM role, the error bucket name and every other identifier stay the same under either brand, so switching brand only changes the delivery streams' endpoint URL.
 
 ## Development
 

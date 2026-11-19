@@ -10,9 +10,20 @@ variable "ingest_token" {
 }
 
 variable "ingest_host" {
-  description = "The Guardian ingest host. Change it only when Vulnesis support asks you to."
+  description = "The Guardian ingest host. Change it only when Vulnetix support asks you to. Under brand = \"vulnesis\" a vulnetix.com host maps onto vulnes.is (ingest.vulnetix.com is ingest.vulnes.is); any other host is used as given."
   type        = string
-  default     = "ingest.vulnes.is"
+  default     = "ingest.vulnetix.com"
+}
+
+variable "brand" {
+  description = "The brand to ship to: \"vulnetix\" (vulnetix.com, the default) or \"vulnesis\" (vulnes.is). It only changes the ingest host: under vulnesis a vulnetix.com host maps onto vulnes.is, its subdomain labels joined by hyphens (ingest.vulnetix.com is ingest.vulnes.is, api.vdb.vulnetix.com is api-vdb.vulnes.is). Resource names, IAM roles and every other identifier stay the same."
+  type        = string
+  default     = "vulnetix"
+
+  validation {
+    condition     = contains(["vulnetix", "vulnesis"], var.brand)
+    error_message = "The brand must be \"vulnetix\" or \"vulnesis\"."
+  }
 }
 
 variable "vpc_ids" {
@@ -39,7 +50,7 @@ variable "send_resolver_logs" {
 }
 
 variable "send_cloudtrail" {
-  description = "Whether to send CloudTrail management write events and console sign-ins. They reach EventBridge only while a trail logs management events, such as the Vulnesis onboarding pipeline's."
+  description = "Whether to send CloudTrail management write events and console sign-ins. They reach EventBridge only while a trail logs management events, such as the Vulnetix onboarding pipeline's."
   type        = bool
   default     = true
 }
