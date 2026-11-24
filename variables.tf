@@ -16,9 +16,9 @@ variable "ingest_host" {
 }
 
 variable "brand" {
-  description = "The brand to ship to: \"vulnetix\" (vulnetix.com, the default) or \"vulnesis\" (vulnes.is). It only changes the ingest host: under vulnesis a vulnetix.com host maps onto vulnes.is, its subdomain labels joined by hyphens (ingest.vulnetix.com is ingest.vulnes.is, api.vdb.vulnetix.com is api-vdb.vulnes.is). Resource names, IAM roles and every other identifier stay the same."
+  description = "The brand to ship to: \"vulnesis\" (vulnes.is, the default) or \"vulnetix\" (vulnetix.com, retired). It only changes the ingest host: under vulnesis a vulnetix.com host maps onto vulnes.is, its subdomain labels joined by hyphens (ingest.vulnetix.com is ingest.vulnes.is, api.vdb.vulnetix.com is api-vdb.vulnes.is). Resource names, IAM roles and every other identifier stay the same."
   type        = string
-  default     = "vulnetix"
+  default     = "vulnesis"
 
   validation {
     condition     = contains(["vulnetix", "vulnesis"], var.brand)

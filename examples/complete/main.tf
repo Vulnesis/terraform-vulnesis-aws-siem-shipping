@@ -22,7 +22,7 @@ module "vulnetix_siem" {
 
   ingest_token = data.aws_secretsmanager_secret_version.guardian.secret_string
   ingest_host  = "ingest.vulnetix.com"
-  brand        = "vulnetix"
+  brand        = "vulnesis"
   vpc_ids      = data.aws_vpcs.production.ids
 
   send_flow_logs     = true
