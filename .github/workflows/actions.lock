@@ -12,7 +12,7 @@ workflows:
     '.github/workflows/vulnetix.yml':
         - 'actions/checkout@v7.0.1'
         - 'actions/download-artifact@v8.0.2'
-        - 'vulnetix/cli@v4.24.6'
+        - 'vulnetix/cli@v4.26.1'
 dependencies:
     'actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8':
         ref: 'v4.2.2'
@@ -46,9 +46,9 @@ dependencies:
         commit: 'sha1-dfe3c3f87815947d99a8997f908cb6525fc44e9e'
         owner_id: 761456
         repo_id: 258271226
-    'sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6':
-        ref: 'v4.1.2'
-        commit: 'sha1-6f9f17788090df1f26f669e9d70d6ae9567deba6'
+    'sigstore/cosign-installer@756fe2d284c7292c4e9b62c8a28f1e5629c59532':
+        ref: 'v4.1.3'
+        commit: 'sha1-756fe2d284c7292c4e9b62c8a28f1e5629c59532'
         owner_id: 71096353
         repo_id: 351211695
     'terraform-linters/setup-tflint@v6.3.2':
@@ -56,12 +56,12 @@ dependencies:
         commit: 'sha1-6ffdbaa3be476b3431f7275c26966ef32ff60337'
         owner_id: 54197850
         repo_id: 281705852
-    'vulnetix/cli@v4.24.6':
-        ref: 'v4.24.6'
-        commit: 'sha1-397ab8905b860c351d75a8fea222de8413989fbc'
+    'vulnetix/cli@v4.26.1':
+        ref: 'v4.26.1'
+        commit: 'sha1-f96162fce721a48ba869a8fa36505eb7270636e0'
         owner_id: 178014019
         repo_id: 809336204
         uses:
             - 'actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8'
             - 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9'
-            - 'sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6'
+            - 'sigstore/cosign-installer@756fe2d284c7292c4e9b62c8a28f1e5629c59532'
